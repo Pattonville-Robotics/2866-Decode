@@ -75,6 +75,10 @@ public class Sample extends LinearOpMode {
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
     private DcMotorEx kebab = null; // this is the launcher thingamajig
+    private DcMotorEx intake = null;
+    private double kebabSpeed = 0.0;
+    
+    WheelRounder rounder_of_wheels = new WheelRounder(.15);
 
     @Override
     public void runOpMode() {
@@ -86,6 +90,7 @@ public class Sample extends LinearOpMode {
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
         kebab = hardwareMap.get(DcMotorEx.class, "kebab_launcher");
+        intake = hardwareMap.get(DcMotorEx.class, "intake");
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -128,10 +133,23 @@ public class Sample extends LinearOpMode {
             */
             MoveCalc movement_calculator = new MoveCalc();
             double[] wheel_motions = movement_calculator.get_wheel_movements(gamepad1.left_stick_x,gamepad1.left_stick_y,gamepad1.right_stick_x,gamepad1.right_stick_y);
+            
+            
             double leftFrontPower = wheel_motions[0];
             double rightFrontPower = wheel_motions[1];
             double leftBackPower = wheel_motions[2];
             double rightBackPower = wheel_motions[3];
+            
+            // set to false to disable drift protection
+            boolean driftProtection = true;
+            if (driftProtection) {
+                double[] drift_protection_motions = rounder_of_wheels.roundWheel(wheel_motions[0], wheel_motions[1]);
+                double[] drift_protection_motions2 = rounder_of_wheels.roundWheel(wheel_motions[2], wheel_motions[3]);
+                leftFrontPower=drift_protection_motions[0];
+                rightFrontPower=drift_protection_motions[1];
+                leftBackPower=drift_protection_motions2[0];
+                rightBackPower=drift_protection_motions2[1];
+            }
             
 
             // Normalize the values so no wheel power exceeds 100%
@@ -149,13 +167,28 @@ public class Sample extends LinearOpMode {
             
             // you will need to change this if you get both controllers
             // always working.
+            
+            /*
             if (gamepad1.y || gamepad2. y) {
                 kebab.setPower(1.0);
             }
             else {
                 kebab.setPower(0);
             }
-
+            */
+            kebabcomp Kebab_Calculator = new kebabcomp();
+            boolean[] Kebab_Buttons = {gamepad1.y||gamepad2.y, gamepad1.b||gamepad2.b, gamepad1.a||gamepad2.a};
+            kebabSpeed = Kebab_Calculator.new_speed(kebabSpeed, Kebab_Buttons);
+            kebab.setPower(kebabSpeed);
+            
+            if ((gamepad1.right_trigger==1)||(gamepad2.right_trigger==1)) {
+                intake.setPower(1);
+            }
+            else if ((gamepad1.left_trigger==1)||(gamepad2.left_trigger==1)) {
+                intake.setPower(-1);
+            }
+            else {intake.setPower(0);}
+            
             // This is test code:
             //
             // Uncomment the following code to test your motor directions.
@@ -174,10 +207,10 @@ public class Sample extends LinearOpMode {
             */
 
             // Send calculated power to wheels
-            leftFrontDrive.setPower(leftFrontPower);
-            rightFrontDrive.setPower(rightFrontPower);
-            leftBackDrive.setPower(leftBackPower);
-            rightBackDrive.setPower(-rightBackPower);
+            leftFrontDrive.setPower(-leftFrontPower);
+            rightFrontDrive.setPower(-rightFrontPower);
+            leftBackDrive.setPower(-leftBackPower);
+            rightBackDrive.setPower(rightBackPower);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());

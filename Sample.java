@@ -132,15 +132,6 @@ public class Sample extends LinearOpMode {
             double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
             double lateral =  gamepad1.left_stick_x;
             double yaw     =  gamepad1.right_stick_x;
-
-            // Combine the joystick requests for each axis-motion to determine each wheel's power.
-            // Set up a variable for each drive wheel to save the power level for telemetry.
-            /*
-            double leftFrontPower  = axial + lateral + yaw;
-            double rightFrontPower = axial - lateral - yaw;
-            double leftBackPower   = axial - lateral + yaw;
-            double rightBackPower  = axial + lateral - yaw;
-            */
             MoveCalc movement_calculator = new MoveCalc();
             double[] wheel_motions = movement_calculator.get_wheel_movements(gamepad1.left_stick_x,gamepad1.left_stick_y,gamepad1.right_stick_x,gamepad1.right_stick_y);
             
@@ -209,10 +200,10 @@ public class Sample extends LinearOpMode {
                 pusher.setPosition(.25);
             }
             */
-            
-            if (gamepad1.dpad_up||gamepad2.dpad_up){pusher.setPosition(.25);}
+            double correction = -0.07;
+            if (gamepad1.dpad_up||gamepad2.dpad_up){pusher.setPosition(.25+correction);}
             if (gamepad1.dpad_right||gamepad2.dpad_right){pusher.setPosition(.375);}
-            if (gamepad1.dpad_down||gamepad2.dpad_down){pusher.setPosition(.5);}
+            if (gamepad1.dpad_down||gamepad2.dpad_down){pusher.setPosition(.5+correction);}
             
             // This is test code:
             //

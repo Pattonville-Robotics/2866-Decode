@@ -39,7 +39,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 @Autonomous
 
-public class phillip extends LinearOpMode {
+public class blue_far extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftFrontDrive = null;
@@ -89,9 +89,6 @@ public class phillip extends LinearOpMode {
            telemetry.addData("Driving:", "Yes");
            telemetry.addData("CPI:", "%5.2f", COUNTS_PER_INCH);
            telemetry.addData("LFP:", "%d", leftFrontDrive.getCurrentPosition());
-           telemetry.addData("RFP:", "%d", rightFrontDrive.getCurrentPosition());
-           telemetry.addData("LBP:", "%d", leftBackDrive.getCurrentPosition());
-           telemetry.addData("RBP:", "%d", rightBackDrive.getCurrentPosition());
            telemetry.addData("leftFrontTarget", "%d", leftFrontTarget);
            telemetry.update();
            sleep(1);
@@ -164,10 +161,10 @@ public class phillip extends LinearOpMode {
         leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         
-        leftFrontDrive.setPower(-.5);
-        leftBackDrive.setPower(-.5);
-        rightFrontDrive.setPower(.5);
-        rightBackDrive.setPower(.5);
+        leftFrontDrive.setPower(.5);
+        leftBackDrive.setPower(.5);
+        rightFrontDrive.setPower(-.5);
+        rightBackDrive.setPower(-.5);
         sleep(600);
         leftFrontDrive.setPower(0);
         leftBackDrive.setPower(0);
@@ -191,10 +188,10 @@ public class phillip extends LinearOpMode {
         rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         
         
-        leftFrontDrive.setPower(.5);
-        leftBackDrive.setPower(.5);
-        rightFrontDrive.setPower(-.5);
-        rightBackDrive.setPower(-.5);
+        leftFrontDrive.setPower(-.5);
+        leftBackDrive.setPower(-.5);
+        rightFrontDrive.setPower(.5);
+        rightBackDrive.setPower(.5);
         sleep(600);
         leftFrontDrive.setPower(.5);
         leftBackDrive.setPower(.5);

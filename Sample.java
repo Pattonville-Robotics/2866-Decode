@@ -30,6 +30,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -77,6 +78,14 @@ public class Sample extends LinearOpMode {
     private DcMotorEx kebab = null; // this is the launcher thingamajig
     private DcMotorEx intake = null;
     private double kebabSpeed = 0.0;
+    private Servo pusher = null;
+    
+    /*
+    servo modes
+        0: default
+        1: +45 degrees
+        2: +90 degrees
+    */
     
     WheelRounder rounder_of_wheels = new WheelRounder(.15);
 
@@ -91,6 +100,7 @@ public class Sample extends LinearOpMode {
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
         kebab = hardwareMap.get(DcMotorEx.class, "kebab_launcher");
         intake = hardwareMap.get(DcMotorEx.class, "intake");
+        pusher = hardwareMap.get(Servo.class, "pusher");
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -188,6 +198,21 @@ public class Sample extends LinearOpMode {
                 intake.setPower(-1);
             }
             else {intake.setPower(0);}
+            
+            /* Old pusher code from when it didn't have the 45 degree mode.
+            if (gamepad1.x||gamepad2.x)
+            {
+                pusher.setPosition(.50);
+            }
+            else
+            {
+                pusher.setPosition(.25);
+            }
+            */
+            
+            if (gamepad1.dpad_up||gamepad2.dpad_up){pusher.setPosition(.25);}
+            if (gamepad1.dpad_right||gamepad2.dpad_right){pusher.setPosition(.375);}
+            if (gamepad1.dpad_down||gamepad2.dpad_down){pusher.setPosition(.5);}
             
             // This is test code:
             //

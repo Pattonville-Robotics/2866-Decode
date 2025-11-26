@@ -28,7 +28,7 @@ public class kebabcomp {
     private double speed_cap;
     
     public kebabcomp () {
-        speed_change = .2; // how much the speed changes by per tick
+        speed_change = .3; // how much the speed changes by per tick
         speed_cap = 1; // maximum speed
     }
     
@@ -45,7 +45,7 @@ public class kebabcomp {
             speed_to_return = 0;
         }
         if (buttons[2]) {
-            speed_to_return -= speed_change;
+            speed_to_return -= speed_change/3;
         }
         
         //compressing values

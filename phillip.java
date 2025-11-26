@@ -39,7 +39,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 @Autonomous
 
-public class autonomous extends LinearOpMode {
+public class phillip extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftFrontDrive = null;
@@ -153,9 +153,27 @@ public class autonomous extends LinearOpMode {
         // rightFrontDrive.setPower(.5);
         // rightBackDrive.setPower(0);
 
+        
+        drivestraight(85);
+        
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        
+        leftFrontDrive.setPower(-.5);
+        leftBackDrive.setPower(-.5);
+        rightFrontDrive.setPower(.5);
+        rightBackDrive.setPower(.5);
+        sleep(600);
+        leftFrontDrive.setPower(0);
+        leftBackDrive.setPower(0);
+        rightFrontDrive.setPower(0);
+        rightBackDrive.setPower(0);
+        sleep(300);
+        
         telemetry.addData("Status", "Driving straight");
         telemetry.update();
-        drivestraight(-47+5); //add 8 inches for tolerances
         kebab.setVelocity(-2150);
         sleep(4000);
         intake.setVelocity(-2000);
@@ -184,7 +202,6 @@ public class autonomous extends LinearOpMode {
         leftBackDrive.setPower(0);
         rightFrontDrive.setPower(0);
         rightBackDrive.setPower(0);
-        
         
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {

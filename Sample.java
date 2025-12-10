@@ -183,10 +183,10 @@ public class Sample extends LinearOpMode {
             kebab.setPower(kebabSpeed);
             
             if ((gamepad1.right_trigger==1)||(gamepad2.right_trigger==1)) {
-                intake.setPower(1);
+                //intake.setPower(1);
             }
             else if ((gamepad1.left_trigger==1)||(gamepad2.left_trigger==1)) {
-                intake.setPower(-1);
+                //intake.setPower(-1);
             }
             else {intake.setPower(0);}
             

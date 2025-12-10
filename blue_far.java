@@ -48,6 +48,7 @@ public class blue_far extends LinearOpMode {
     private DcMotor rightBackDrive = null;
     private DcMotorEx kebab = null; // this is the launcher thingamajig
     private DcMotorEx intake = null;
+    private DcMotorEx mysteryServo = null; // they never bothered to explain what this did
     private double kebabSpeed = 0.0;
     private final double COUNTS_PER_MOTOR_REV = 537.7;
     private final double WHEEL_DIAMETER_INCHES = 2.95;
@@ -115,6 +116,7 @@ public class blue_far extends LinearOpMode {
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
         kebab = hardwareMap.get(DcMotorEx.class, "kebab_launcher");
         intake = hardwareMap.get(DcMotorEx.class, "intake");
+        mysteryServo = hardwareMap.get(DcMotorEx.class, "mysteryServo");
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -176,7 +178,7 @@ public class blue_far extends LinearOpMode {
         telemetry.update();
         kebab.setVelocity(-2150);
         sleep(4000);
-        intake.setVelocity(-2000);
+        //intake.setVelocity(-2000);
         sleep(3500);
         kebab.setPower(0);
         intake.setPower(0);
@@ -202,6 +204,7 @@ public class blue_far extends LinearOpMode {
         leftBackDrive.setPower(0);
         rightFrontDrive.setPower(0);
         rightBackDrive.setPower(0);
+        
         
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {

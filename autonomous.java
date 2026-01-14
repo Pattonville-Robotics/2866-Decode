@@ -148,16 +148,18 @@ public class autonomous extends LinearOpMode {
         // rightFrontDrive.setPower(1);
         // rightBackDrive.setPower(1);
         // sleep(3000);
-        // leftFrontDrive.setPower(0);
-        // leftBackDrive.setPower(0);
-        // rightFrontDrive.setPower(.5);
-        // rightBackDrive.setPower(0);
+        leftFrontDrive.setPower(0);
+        leftBackDrive.setPower(0);
+        rightFrontDrive.setPower(.5);
+        rightBackDrive.setPower(0);
 
+        
         telemetry.addData("Status", "Driving straight");
         telemetry.update();
+        //kebab.setVelocity(-2150); // -2150 before emergency change 12/20
         drivestraight(-47+5); //add 8 inches for tolerances
-        kebab.setVelocity(-2150);
-        sleep(4000);
+        kebab.setPower(-.795); // this was added on 12/20 as part of the emergency changes
+        sleep(5000); // 4000 before emergency change 12/20
         intake.setVelocity(-2000);
         sleep(3500);
         kebab.setPower(0);

@@ -65,9 +65,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Basic: Omni Linear OpMode2866", group="Linear Opmode")
+@TeleOp(name="Basic: VelocityDrive", group="Linear Opmode")
 
-public class Sample extends LinearOpMode {
+public class VelocityDrive extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
@@ -131,6 +131,9 @@ public class Sample extends LinearOpMode {
         boolean button_press = false;
 
         // run until the end of the match (driver presses STOP)
+        
+        wheelController wheelComp = new wheelController(leftFrontDrive,rightFrontDrive,leftBackDrive,rightBackDrive);
+        
         while (opModeIsActive()) {
             double max;
 
@@ -172,35 +175,27 @@ public class Sample extends LinearOpMode {
                 rightBackPower  /= max;
             }
             
-            // you will need to change this if you get both controllers
-            // always working.
-            
-            /*
-            if (gamepad1.y || gamepad2. y) {
-                kebab.setPower(1.0);
-            }
-            else {
-                kebab.setPower(0);
-            }
-            */
             kebabcomp Kebab_Calculator = new kebabcomp();
             boolean[] Kebab_Buttons = {gamepad1.b||gamepad2.b, gamepad1.x||gamepad2.x, gamepad1.a||gamepad2.a, gamepad1.y||gamepad2.y};
             kebabSpeed = Kebab_Calculator.new_speed(kebabSpeed, Kebab_Buttons);
             kebab.setPower(kebabSpeed);
             
-            if ((gamepad1.dpad_up)||(gamepad2.dpad_up)) {
+            if ((gamepad1.left_trigger)||(gamepad2.left_trigger)) {
                 intake.setPower(1);
                 leftFrontPower = 0.0;
                 rightFrontPower = 0.0;
                 leftBackPower = 0.0;
                 rightBackPower = 0.0;
             }
-            else if ((gamepad1.dpad_down)||(gamepad2.dpad_down)) {
+            else if ((gamepad1.right_trigger)||(gamepad2.right_trigger)) {
                 intake.setPower(-1);
+                /*
                 leftFrontPower = 0.0;
                 rightFrontPower = 0.0;
                 leftBackPower = 0.0;
                 rightBackPower = 0.0;
+                */
+                wheelComp.set(0,0,0,0);
             }
             else {intake.setPower(0);}
             
@@ -210,18 +205,6 @@ public class Sample extends LinearOpMode {
             }
             else {
                 //mysteryservo.setPosition(0.5);
-            }
-            if ((gamepad1.right_trigger==1)||(gamepad2.right_trigger==1))
-            {
-                //mysteryservo2.setPosition(.5);
-                leftFrontPower = 0.0;
-                rightFrontPower = 0.0;
-                leftBackPower = 0.0;
-                rightBackPower = 0.0;
-            }
-            else {
-                /*mysteryservo2.setPosition(0.145);*/
-                
             }
             
             

@@ -74,6 +74,8 @@ public class phillip extends LinearOpMode {
         leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         
+        sleep(5000);
+        
         leftFrontDrive.setPower(.5);
         rightFrontDrive.setPower(.5);
         leftBackDrive.setPower(.5);
@@ -177,7 +179,7 @@ public class phillip extends LinearOpMode {
         
         telemetry.addData("Status", "Driving straight");
         telemetry.update();
-        kebab.setVelocity(-2150);
+        kebab.setPower(-.75);
         sleep(4000);
         intake.setVelocity(-2000);
         sleep(3500);

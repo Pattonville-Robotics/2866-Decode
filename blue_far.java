@@ -116,7 +116,10 @@ public class blue_far extends LinearOpMode {
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
         kebab = hardwareMap.get(DcMotorEx.class, "kebab_launcher");
         intake = hardwareMap.get(DcMotorEx.class, "intake");
-        mysteryServo = hardwareMap.get(DcMotorEx.class, "mysteryServo");
+        //mysteryServo = hardwareMap.get(DcMotorEx.class, "mysteryServo");
+        
+        sleep(5000);
+        
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -176,9 +179,9 @@ public class blue_far extends LinearOpMode {
         
         telemetry.addData("Status", "Driving straight");
         telemetry.update();
-        kebab.setVelocity(-2150);
+        kebab.setPower(-0.80);
         sleep(4000);
-        //intake.setVelocity(-2000);
+        intake.setVelocity(-2000);
         sleep(3500);
         kebab.setPower(0);
         intake.setPower(0);

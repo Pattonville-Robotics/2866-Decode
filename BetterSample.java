@@ -37,6 +37,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import io.github.harpolewillow.turnedaxismecanum.TurnedAxisMecanum;
+import io.github.harpolewillow.complexkebabcalculator.ComplexKebabCalculator;
+
 /**
  * This file contains an example of a Linear "OpMode".
  * An OpMode is a 'program' that runs in either the autonomous or the teleop period of an FTC match.
@@ -65,9 +68,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Basic: Omni Linear OpMode2866", group="Linear Opmode")
+@TeleOp(name="Advanced: Omni Linear OpMode2866", group="Linear Opmode")
 
-public class Sample extends LinearOpMode {
+public class BetterSample extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
@@ -90,6 +93,8 @@ public class Sample extends LinearOpMode {
     */
     
     WheelRounder rounder_of_wheels = new WheelRounder(.15);
+    ComplexKebabCalculator complexKebabCalculator = new ComplexKebabCalculator(.7);
+    TurnedAxisMecanum turnedAxisMecanum = new TurnedAxisMecanum();
 
     @Override
     public void runOpMode() {
@@ -138,27 +143,13 @@ public class Sample extends LinearOpMode {
             double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
             double lateral =  gamepad1.left_stick_x;
             double yaw     =  gamepad1.right_stick_x;
-            MoveCalc movement_calculator = new MoveCalc();
-            double[] wheel_motions = movement_calculator.get_wheel_movements(gamepad1.left_stick_x,gamepad1.left_stick_y,gamepad1.right_stick_x,gamepad1.right_stick_y);
+            RevisedWheelControls movement_calculator = new RevisedWheelControls();
+            double[] wheel_motions = movement_calculator.calculate(gamepad1.left_stick_x,gamepad1.left_stick_y,gamepad1.right_stick_x,gamepad1.right_stick_y);
             
             
-            double leftFrontPower = wheel_motions[0];
-            double rightFrontPower = wheel_motions[1];
-            double leftBackPower = wheel_motions[2];
-            double rightBackPower = wheel_motions[3];
             
-            // set to false to disable drift protection
-            boolean driftProtection = true;
-            if (driftProtection) {
-                double[] drift_protection_motions = rounder_of_wheels.roundWheel(wheel_motions[0], wheel_motions[1]);
-                double[] drift_protection_motions2 = rounder_of_wheels.roundWheel(wheel_motions[2], wheel_motions[3]);
-                leftFrontPower=drift_protection_motions[0];
-                rightFrontPower=drift_protection_motions[1];
-                leftBackPower=drift_protection_motions2[0];
-                rightBackPower=drift_protection_motions2[1];
-            }
             
-
+            /*
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
             max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
@@ -171,22 +162,31 @@ public class Sample extends LinearOpMode {
                 leftBackPower   /= max;
                 rightBackPower  /= max;
             }
+            */
             
-            // you will need to change this if you get both controllers
-            // always working.
+            double[][] joystickValues = 
+            {
+                new double[] {gamepad1.left_stick_x, gamepad1.left_stick_y},
+                new double[] {gamepad1.right_stick_x, gamepad1.right_stick_y}
+            };
+            double[][] wheelValues = turnedAxisMecanum.calculate(joystickValues);
+            double leftFrontPower = wheelValues[0][0];
+            double leftBackPower = wheelValues[0][1];
+            double rightFrontPower = wheelValues[1][0];
+            double rightBackPower = wheelValues[1][1];
             
             /*
-            if (gamepad1.y || gamepad2. y) {
-                kebab.setPower(1.0);
-            }
-            else {
-                kebab.setPower(0);
-            }
-            */
             kebabcomp Kebab_Calculator = new kebabcomp();
             boolean[] Kebab_Buttons = {gamepad1.b||gamepad2.b, gamepad1.x||gamepad2.x, gamepad1.a||gamepad2.a, gamepad1.y||gamepad2.y};
             kebabSpeed = Kebab_Calculator.new_speed(kebabSpeed, Kebab_Buttons);
             kebab.setPower(kebabSpeed);
+            */
+            
+            complexKebabCalculator.opMode=this;
+            kebabSpeed = complexKebabCalculator.calculate(gamepad1.y||gamepad2.y, gamepad1.x||gamepad2.x, gamepad1.a||gamepad2.a, gamepad1.b||gamepad2.b);
+            kebab.setPower(kebabSpeed*.97);
+            telemetry.addLine(kebabSpeed+"");
+            
             
             /*
             if (gamepad2.left_trigger>0) {
@@ -239,9 +239,9 @@ public class Sample extends LinearOpMode {
             double correction = -0.07;
 
             // Send calculated power to wheels
-            leftFrontDrive.setPower(-leftFrontPower);
-            rightFrontDrive.setPower(-rightFrontPower);
-            leftBackDrive.setPower(-leftBackPower);
+            leftFrontDrive.setPower(leftFrontPower);
+            rightFrontDrive.setPower(rightFrontPower);
+            leftBackDrive.setPower(leftBackPower);
             rightBackDrive.setPower(rightBackPower);
             
             

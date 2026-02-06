@@ -65,9 +65,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Basic: Omni Linear OpMode2866", group="Linear Opmode")
+@TeleOp(name="Basic: DriveVelocity", group="Linear Opmode")
 
-public class Sample extends LinearOpMode {
+public class DriveVelocity extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
@@ -102,6 +102,7 @@ public class Sample extends LinearOpMode {
         rightBackDrive = hardwareMap.get(DcMotorEx.class, "right_back_drive");
         kebab = hardwareMap.get(DcMotorEx.class, "kebab_launcher");
         intake = hardwareMap.get(DcMotorEx.class, "intake");
+        wheelController wheelComp = new wheelController(leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive);
         //pusher = hardwareMap.get(Servo.class, "pusher");
         //mysteryservo = hardwareMap.get(Servo.class, "mysteryservo");
 
@@ -152,10 +153,10 @@ public class Sample extends LinearOpMode {
             if (driftProtection) {
                 double[] drift_protection_motions = rounder_of_wheels.roundWheel(wheel_motions[0], wheel_motions[1]);
                 double[] drift_protection_motions2 = rounder_of_wheels.roundWheel(wheel_motions[2], wheel_motions[3]);
-                leftFrontPower=drift_protection_motions[0];
-                rightFrontPower=drift_protection_motions[1];
-                leftBackPower=drift_protection_motions2[0];
-                rightBackPower=drift_protection_motions2[1];
+                leftFrontPower= drift_protection_motions[0];
+                rightFrontPower= drift_protection_motions[1];
+                leftBackPower= drift_protection_motions2[0];
+                rightBackPower= drift_protection_motions2[1];
             }
             
 
@@ -165,12 +166,17 @@ public class Sample extends LinearOpMode {
             max = Math.max(max, Math.abs(leftBackPower));
             max = Math.max(max, Math.abs(rightBackPower));
 
-            if (max > 1.0) {
-                leftFrontPower  /= max;
-                rightFrontPower /= max;
-                leftBackPower   /= max;
-                rightBackPower  /= max;
+            if (max > 1) {
+                leftFrontPower  = (leftFrontPower/max);
+                rightFrontPower = (rightFrontPower/max);
+                leftBackPower   = (leftBackPower/max);
+                rightBackPower  = (rightBackPower/max);
             }
+            double multiplication_factor = 3000; // how much to mod the wheel power by
+            leftFrontPower*=multiplication_factor;
+            rightFrontPower*=multiplication_factor;
+            leftBackPower*=multiplication_factor;
+            rightBackPower*=multiplication_factor;
             
             // you will need to change this if you get both controllers
             // always working.
@@ -188,15 +194,14 @@ public class Sample extends LinearOpMode {
             kebabSpeed = Kebab_Calculator.new_speed(kebabSpeed, Kebab_Buttons);
             kebab.setPower(kebabSpeed);
             
-            /*
-            if (gamepad2.left_trigger>0) {
+            if ((gamepad1.dpad_up)||(gamepad2.dpad_up)) {
                 intake.setPower(1);
                 leftFrontPower = 0.0;
                 rightFrontPower = 0.0;
                 leftBackPower = 0.0;
                 rightBackPower = 0.0;
             }
-            else if (gamepad2.right_trigger>0) {
+            else if ((gamepad1.dpad_down)||(gamepad2.dpad_down)) {
                 intake.setPower(-1);
                 leftFrontPower = 0.0;
                 rightFrontPower = 0.0;
@@ -205,6 +210,13 @@ public class Sample extends LinearOpMode {
             }
             else {intake.setPower(0);}
             
+            if ((gamepad1.left_trigger==1)||(gamepad2.left_trigger==1))
+            {
+                //mysteryservo.setPosition(.145);
+            }
+            else {
+                //mysteryservo.setPosition(0.5);
+            }
             if ((gamepad1.right_trigger==1)||(gamepad2.right_trigger==1))
             {
                 //mysteryservo2.setPosition(.5);
@@ -216,34 +228,21 @@ public class Sample extends LinearOpMode {
             else {
                 /*mysteryservo2.setPosition(0.145);*/
                 
-            //}
-            
-            //*/
-            
-            if ((gamepad1.dpad_up)||(gamepad2.dpad_up)) {
-                intake.setPower(1);
-            }
-            else if ((gamepad1.dpad_down)||(gamepad2.dpad_down)) {
-                intake.setPower(-1);
-            }
-            else {intake.setPower(0);}
-            
-            if (gamepad1.right_trigger>0) {
-                leftFrontPower = 0.0;
-                rightFrontPower = 0.0;
-                leftBackPower = 0.0;
-                rightBackPower = 0.0;
             }
             
             
             double correction = -0.07;
 
             // Send calculated power to wheels
+            
+            /*
             leftFrontDrive.setPower(-leftFrontPower);
             rightFrontDrive.setPower(-rightFrontPower);
             leftBackDrive.setPower(-leftBackPower);
             rightBackDrive.setPower(rightBackPower);
+            */
             
+            wheelComp.act(leftFrontPower,rightFrontPower,leftBackPower,rightBackPower);
             
             
             

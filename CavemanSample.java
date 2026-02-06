@@ -1,4 +1,4 @@
-/* Copyright (c) 2021 FIRST. All rights reserved.
+ /* Copyright (c) 2021 FIRST. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted (subject to the limitations in the disclaimer below) provided that
@@ -37,6 +37,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import io.github.harpolewillow.complexkebabcalculator.ComplexKebabCalculator;
+
 /**
  * This file contains an example of a Linear "OpMode".
  * An OpMode is a 'program' that runs in either the autonomous or the teleop period of an FTC match.
@@ -65,16 +67,16 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Basic: VelocityDrive", group="Linear Opmode")
+@TeleOp(name="Caveman: Omni Linear OpMode2866", group="Linear Opmode")
 
-public class VelocityDrive extends LinearOpMode {
+public class CavemanSample extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftFrontDrive = null;
-    private DcMotor leftBackDrive = null;
-    private DcMotor rightFrontDrive = null;
-    private DcMotor rightBackDrive = null;
+    private DcMotorEx leftFrontDrive = null;
+    private DcMotorEx leftBackDrive = null;
+    private DcMotorEx rightFrontDrive = null;
+    private DcMotorEx rightBackDrive = null;
     private DcMotorEx kebab = null; // this is the launcher thingamajig
     private DcMotorEx intake = null;
     private double kebabSpeed = 0.0;
@@ -90,16 +92,16 @@ public class VelocityDrive extends LinearOpMode {
     */
     
     WheelRounder rounder_of_wheels = new WheelRounder(.15);
-
+    ComplexKebabCalculator complexKebabCalculator = new ComplexKebabCalculator(.7);
     @Override
     public void runOpMode() {
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
-        leftFrontDrive  = hardwareMap.get(DcMotor.class, "left_front_drive");
-        leftBackDrive  = hardwareMap.get(DcMotor.class, "left_back_drive");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
-        rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
+        leftFrontDrive  = hardwareMap.get(DcMotorEx.class, "left_front_drive");
+        leftBackDrive  = hardwareMap.get(DcMotorEx.class, "left_back_drive");
+        rightFrontDrive = hardwareMap.get(DcMotorEx.class, "right_front_drive");
+        rightBackDrive = hardwareMap.get(DcMotorEx.class, "right_back_drive");
         kebab = hardwareMap.get(DcMotorEx.class, "kebab_launcher");
         intake = hardwareMap.get(DcMotorEx.class, "intake");
         //pusher = hardwareMap.get(Servo.class, "pusher");
@@ -131,9 +133,6 @@ public class VelocityDrive extends LinearOpMode {
         boolean button_press = false;
 
         // run until the end of the match (driver presses STOP)
-        
-        wheelController wheelComp = new wheelController(leftFrontDrive,rightFrontDrive,leftBackDrive,rightBackDrive);
-        
         while (opModeIsActive()) {
             double max;
 
@@ -141,25 +140,14 @@ public class VelocityDrive extends LinearOpMode {
             double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
             double lateral =  gamepad1.left_stick_x;
             double yaw     =  gamepad1.right_stick_x;
-            MoveCalc movement_calculator = new MoveCalc();
-            double[] wheel_motions = movement_calculator.get_wheel_movements(gamepad1.left_stick_x,gamepad1.left_stick_y,gamepad1.right_stick_x,gamepad1.right_stick_y);
+            RevisedWheelControls movement_calculator = new RevisedWheelControls();
+            double[] wheel_motions = movement_calculator.calculate(gamepad1.left_stick_x,gamepad1.left_stick_y,gamepad1.right_stick_x,gamepad1.right_stick_y);
             
             
             double leftFrontPower = wheel_motions[0];
             double rightFrontPower = wheel_motions[1];
             double leftBackPower = wheel_motions[2];
             double rightBackPower = wheel_motions[3];
-            
-            // set to false to disable drift protection
-            boolean driftProtection = true;
-            if (driftProtection) {
-                double[] drift_protection_motions = rounder_of_wheels.roundWheel(wheel_motions[0], wheel_motions[1]);
-                double[] drift_protection_motions2 = rounder_of_wheels.roundWheel(wheel_motions[2], wheel_motions[3]);
-                leftFrontPower=drift_protection_motions[0];
-                rightFrontPower=drift_protection_motions[1];
-                leftBackPower=drift_protection_motions2[0];
-                rightBackPower=drift_protection_motions2[1];
-            }
             
 
             // Normalize the values so no wheel power exceeds 100%
@@ -175,36 +163,32 @@ public class VelocityDrive extends LinearOpMode {
                 rightBackPower  /= max;
             }
             
+            /*
             kebabcomp Kebab_Calculator = new kebabcomp();
             boolean[] Kebab_Buttons = {gamepad1.b||gamepad2.b, gamepad1.x||gamepad2.x, gamepad1.a||gamepad2.a, gamepad1.y||gamepad2.y};
             kebabSpeed = Kebab_Calculator.new_speed(kebabSpeed, Kebab_Buttons);
             kebab.setPower(kebabSpeed);
+            */
             
-            if ((gamepad1.left_trigger)||(gamepad2.left_trigger)) {
+            
+            complexKebabCalculator.opMode=this;
+            kebabSpeed = complexKebabCalculator.calculate(gamepad1.y||gamepad2.y, gamepad1.x||gamepad2.x, gamepad1.a||gamepad2.a, gamepad1.b||gamepad2.b);
+            kebab.setPower(kebabSpeed*.97);
+            telemetry.addLine(kebabSpeed+"");
+            
+            if ((gamepad1.dpad_up)||(gamepad2.dpad_up)) {
                 intake.setPower(1);
-                leftFrontPower = 0.0;
-                rightFrontPower = 0.0;
-                leftBackPower = 0.0;
-                rightBackPower = 0.0;
             }
-            else if ((gamepad1.right_trigger)||(gamepad2.right_trigger)) {
+            else if ((gamepad1.dpad_down)||(gamepad2.dpad_down)) {
                 intake.setPower(-1);
-                /*
-                leftFrontPower = 0.0;
-                rightFrontPower = 0.0;
-                leftBackPower = 0.0;
-                rightBackPower = 0.0;
-                */
-                wheelComp.set(0,0,0,0);
             }
             else {intake.setPower(0);}
             
-            if ((gamepad1.left_trigger==1)||(gamepad2.left_trigger==1))
-            {
-                //mysteryservo.setPosition(.145);
-            }
-            else {
-                //mysteryservo.setPosition(0.5);
+            if (gamepad1.right_trigger>0) {
+                leftFrontPower = 0.0;
+                rightFrontPower = 0.0;
+                leftBackPower = 0.0;
+                rightBackPower = 0.0;
             }
             
             

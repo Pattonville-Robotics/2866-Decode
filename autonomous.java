@@ -158,9 +158,10 @@ public class autonomous extends LinearOpMode {
         telemetry.update();
         //kebab.setVelocity(-2150); // -2150 before emergency change 12/20
         drivestraight(-47+5); //add 8 inches for tolerances
-        kebab.setPower(-.795); // this was added on 12/20 as part of the emergency changes
+        sleep(1000);
+        kebab.setPower(-.800); // this was added on 12/20 as part of the emergency changes
         sleep(5000); // 4000 before emergency change 12/20
-        intake.setVelocity(-2000);
+        intake.setVelocity(-1800);
         sleep(3500);
         kebab.setPower(0);
         intake.setPower(0);

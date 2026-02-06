@@ -8,10 +8,10 @@ public class wheelController {
 
     // todo: write your code here
     
-    DcMotor leftFront;
-    DcMotor rightFront;
-    DcMotor leftBack;
-    DcMotor rightBack;
+    DcMotorEx leftFront;
+    DcMotorEx rightFront;
+    DcMotorEx leftBack;
+    DcMotorEx rightBack;
     
     public wheelController (DcMotorEx constructor_leftFront, DcMotorEx constructor_rightFront, DcMotorEx constructor_leftBack, DcMotorEx constructor_rightBack) {
         leftFront = constructor_leftFront;

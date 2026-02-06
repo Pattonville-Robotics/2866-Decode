@@ -38,18 +38,10 @@ public class kebabcomp {
         double speed_to_return = old_speed;
         
         //detect button presses
-        if (buttons[0]) {
-            speed_to_return = 0;
-        }
-        if (buttons[1]) {
-            speed_to_return = -.5;
-        }
-        if (buttons[2]) {
-            speed_to_return = -.75;
-        }
-        if (buttons[3]) {
-            speed_to_return = -1;
-        }
+        if (buttons[0]) {speed_to_return = 0;}
+        if (buttons[1]) {speed_to_return = -.8;}
+        if (buttons[2]) {speed_to_return = -.91;}
+        if (buttons[3]) {speed_to_return = -1;}
         
         //compressing values
         if (speed_to_return>speed_cap) {
